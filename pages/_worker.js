@@ -162,6 +162,13 @@ export default {
 
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
 
+    // /ping —— 极轻量，不走 JSON 序列化，用于预热连接
+    if (url.pathname === '/ping') {
+      return new Response('pong', {
+        headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store, max-age=0', ...CORS },
+      });
+    }
+
     if (url.pathname === '/health') {
       const base = { ok: true, service: 'proton-api-relay', runtime: 'cloudflare-pages', host: url.host, time: new Date().toISOString() };
       if (url.searchParams.get('probe')) {
